@@ -17,6 +17,13 @@ import core.Stand;
 import java.util.ArrayList;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import controllers.StandController;
+import core.LibraryModel;
+import utils.Response;
+import controllers.PublisherController;
+
+
+
 
 /**
  *
@@ -31,6 +38,15 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private ArrayList<Narrator> narrators;
     private ArrayList<Publisher> publishers;
     private ArrayList<Book> books;
+    private LibraryModel model;
+    private StandController standController;
+    private PublisherController publisherController;
+
+
+
+
+    
+    
     
     /**
      * Creates new form MegaferiaFrame
@@ -44,6 +60,9 @@ public class MegaferiaFrame extends javax.swing.JFrame {
         this.narrators = new ArrayList<>();
         this.publishers = new ArrayList<>();
         this.books = new ArrayList<>();
+        this.model = new LibraryModel();
+        this.standController = new StandController(model);
+        this.publisherController = new PublisherController(model);
     }
 
     /**
@@ -139,30 +158,30 @@ public class MegaferiaFrame extends javax.swing.JFrame {
         Scroll_ShowPersonas = new javax.swing.JScrollPane();
         Table_ShowPersonas = new javax.swing.JTable();
         Button_ShowPers_Consultar = new javax.swing.JButton();
-        jPanel9 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jButton14 = new javax.swing.JButton();
-        jPanel10 = new javax.swing.JPanel();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
-        jButton15 = new javax.swing.JButton();
-        jComboBox9 = new javax.swing.JComboBox<>();
-        jLabel25 = new javax.swing.JLabel();
-        jPanel11 = new javax.swing.JPanel();
-        jLabel26 = new javax.swing.JLabel();
-        jComboBox10 = new javax.swing.JComboBox<>();
-        jLabel27 = new javax.swing.JLabel();
-        jButton18 = new javax.swing.JButton();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
-        jLabel28 = new javax.swing.JLabel();
-        jComboBox11 = new javax.swing.JComboBox<>();
-        jButton19 = new javax.swing.JButton();
-        jLabel29 = new javax.swing.JLabel();
-        jScrollPane9 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
-        jButton20 = new javax.swing.JButton();
+        Panel_ShowStands = new javax.swing.JPanel();
+        Scroll_ShowStands = new javax.swing.JScrollPane();
+        Table_ShowStands = new javax.swing.JTable();
+        Button_ShowStan_Consultar = new javax.swing.JButton();
+        Panel_ShowLibros = new javax.swing.JPanel();
+        Scroll_ShowLibros = new javax.swing.JScrollPane();
+        Table_ShowLibros = new javax.swing.JTable();
+        Button_ShowLib_Consultar = new javax.swing.JButton();
+        ComboBox_ShowLib_Libros = new javax.swing.JComboBox<>();
+        Label_ShowLib_Libros = new javax.swing.JLabel();
+        Panel_ConsultasAdicionales = new javax.swing.JPanel();
+        Label_ConsAdic_BusqLibros = new javax.swing.JLabel();
+        ComboBox_ConsAdic_Autor = new javax.swing.JComboBox<>();
+        Label_ConsAdic_Autor = new javax.swing.JLabel();
+        Button_ConsAdic_Consultar_1 = new javax.swing.JButton();
+        Scroll_ConsAdic_1 = new javax.swing.JScrollPane();
+        Table_ConsAdic_1 = new javax.swing.JTable();
+        Label_ConsAdic_Formato = new javax.swing.JLabel();
+        ComboBox_ConsAdic_Formato = new javax.swing.JComboBox<>();
+        Button_ConsAdic_Consultar_2 = new javax.swing.JButton();
+        Label_ConsAdic_AutLibDifEdit = new javax.swing.JLabel();
+        Scroll_ConsAdic_2 = new javax.swing.JScrollPane();
+        Table_ConsAdic_2 = new javax.swing.JTable();
+        Button_ConsAdic_Consultar_3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -976,7 +995,7 @@ public class MegaferiaFrame extends javax.swing.JFrame {
 
         TabbedPane_Tabla.addTab("Show Personas", Panel_ShowPersonas);
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        Table_ShowStands.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -995,44 +1014,44 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane6.setViewportView(jTable3);
+        Scroll_ShowStands.setViewportView(Table_ShowStands);
 
-        jButton14.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton14.setText("Consultar");
-        jButton14.setToolTipText("");
-        jButton14.addActionListener(new java.awt.event.ActionListener() {
+        Button_ShowStan_Consultar.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Button_ShowStan_Consultar.setText("Consultar");
+        Button_ShowStan_Consultar.setToolTipText("");
+        Button_ShowStan_Consultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton14ActionPerformed(evt);
+                Button_ShowStan_ConsultarActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_ShowStandsLayout = new javax.swing.GroupLayout(Panel_ShowStands);
+        Panel_ShowStands.setLayout(Panel_ShowStandsLayout);
+        Panel_ShowStandsLayout.setHorizontalGroup(
+            Panel_ShowStandsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ShowStandsLayout.createSequentialGroup()
+                .addGroup(Panel_ShowStandsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_ShowStandsLayout.createSequentialGroup()
                         .addGap(27, 27, 27)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(Scroll_ShowStands, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(Panel_ShowStandsLayout.createSequentialGroup()
                         .addGap(361, 361, 361)
-                        .addComponent(jButton14)))
+                        .addComponent(Button_ShowStan_Consultar)))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+        Panel_ShowStandsLayout.setVerticalGroup(
+            Panel_ShowStandsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ShowStandsLayout.createSequentialGroup()
                 .addGap(41, 41, 41)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+                .addComponent(Scroll_ShowStands, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Button_ShowStan_Consultar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39))
         );
 
-        TabbedPane_Tabla.addTab("Show Stands", jPanel9);
+        TabbedPane_Tabla.addTab("Show Stands", Panel_ShowStands);
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+        Table_ShowLibros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null, null, null},
@@ -1051,75 +1070,75 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane7.setViewportView(jTable4);
+        Scroll_ShowLibros.setViewportView(Table_ShowLibros);
 
-        jButton15.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton15.setText("Consultar");
-        jButton15.addActionListener(new java.awt.event.ActionListener() {
+        Button_ShowLib_Consultar.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Button_ShowLib_Consultar.setText("Consultar");
+        Button_ShowLib_Consultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton15ActionPerformed(evt);
+                Button_ShowLib_ConsultarActionPerformed(evt);
             }
         });
 
-        jComboBox9.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno...", "Libros Impresos", "Libros Digitales", "Audiolibros", "Todos los Libros" }));
+        ComboBox_ShowLib_Libros.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        ComboBox_ShowLib_Libros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno...", "Libros Impresos", "Libros Digitales", "Audiolibros", "Todos los Libros" }));
 
-        jLabel25.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jLabel25.setText("Libros");
+        Label_ShowLib_Libros.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Label_ShowLib_Libros.setText("Libros");
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel10Layout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_ShowLibrosLayout = new javax.swing.GroupLayout(Panel_ShowLibros);
+        Panel_ShowLibros.setLayout(Panel_ShowLibrosLayout);
+        Panel_ShowLibrosLayout.setHorizontalGroup(
+            Panel_ShowLibrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ShowLibrosLayout.createSequentialGroup()
+                .addGroup(Panel_ShowLibrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_ShowLibrosLayout.createSequentialGroup()
                         .addGap(361, 361, 361)
-                        .addComponent(jButton15))
-                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addComponent(Button_ShowLib_Consultar))
+                    .addGroup(Panel_ShowLibrosLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addComponent(Scroll_ShowLibros, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(Panel_ShowLibrosLayout.createSequentialGroup()
                         .addGap(38, 38, 38)
-                        .addComponent(jLabel25)
+                        .addComponent(Label_ShowLib_Libros)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ComboBox_ShowLib_Libros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
+        Panel_ShowLibrosLayout.setVerticalGroup(
+            Panel_ShowLibrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ShowLibrosLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel25))
+                .addGroup(Panel_ShowLibrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ComboBox_ShowLib_Libros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Label_ShowLib_Libros))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addComponent(Scroll_ShowLibros, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Button_ShowLib_Consultar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
 
-        TabbedPane_Tabla.addTab("Show Libros", jPanel10);
+        TabbedPane_Tabla.addTab("Show Libros", Panel_ShowLibros);
 
-        jLabel26.setFont(new java.awt.Font("Yu Gothic UI", 0, 24)); // NOI18N
-        jLabel26.setText("Busqueda Libros");
+        Label_ConsAdic_BusqLibros.setFont(new java.awt.Font("Yu Gothic UI", 0, 24)); // NOI18N
+        Label_ConsAdic_BusqLibros.setText("Busqueda Libros");
 
-        jComboBox10.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jComboBox10.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno..." }));
+        ComboBox_ConsAdic_Autor.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        ComboBox_ConsAdic_Autor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno..." }));
 
-        jLabel27.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jLabel27.setText("Autor");
+        Label_ConsAdic_Autor.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Label_ConsAdic_Autor.setText("Autor");
 
-        jButton18.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton18.setText("Consultar");
-        jButton18.addActionListener(new java.awt.event.ActionListener() {
+        Button_ConsAdic_Consultar_1.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Button_ConsAdic_Consultar_1.setText("Consultar");
+        Button_ConsAdic_Consultar_1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton18ActionPerformed(evt);
+                Button_ConsAdic_Consultar_1ActionPerformed(evt);
             }
         });
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        Table_ConsAdic_1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null, null, null},
@@ -1138,26 +1157,26 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane8.setViewportView(jTable5);
+        Scroll_ConsAdic_1.setViewportView(Table_ConsAdic_1);
 
-        jLabel28.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jLabel28.setText("Formato");
+        Label_ConsAdic_Formato.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Label_ConsAdic_Formato.setText("Formato");
 
-        jComboBox11.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jComboBox11.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno...", "Pasta dura", "Pasta blanda", "EPUB", "PDF", "MOBI/AZW", "MP3", "MP4", "WAV", "WMA", "Otro" }));
+        ComboBox_ConsAdic_Formato.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        ComboBox_ConsAdic_Formato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione uno...", "Pasta dura", "Pasta blanda", "EPUB", "PDF", "MOBI/AZW", "MP3", "MP4", "WAV", "WMA", "Otro" }));
 
-        jButton19.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton19.setText("Consultar");
-        jButton19.addActionListener(new java.awt.event.ActionListener() {
+        Button_ConsAdic_Consultar_2.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Button_ConsAdic_Consultar_2.setText("Consultar");
+        Button_ConsAdic_Consultar_2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton19ActionPerformed(evt);
+                Button_ConsAdic_Consultar_2ActionPerformed(evt);
             }
         });
 
-        jLabel29.setFont(new java.awt.Font("Yu Gothic UI", 0, 24)); // NOI18N
-        jLabel29.setText("Autores con más Libros en Diferentes Editoriales");
+        Label_ConsAdic_AutLibDifEdit.setFont(new java.awt.Font("Yu Gothic UI", 0, 24)); // NOI18N
+        Label_ConsAdic_AutLibDifEdit.setText("Autores con más Libros en Diferentes Editoriales");
 
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
+        Table_ConsAdic_2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -1176,80 +1195,80 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane9.setViewportView(jTable6);
+        Scroll_ConsAdic_2.setViewportView(Table_ConsAdic_2);
 
-        jButton20.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
-        jButton20.setText("Consultar");
-        jButton20.addActionListener(new java.awt.event.ActionListener() {
+        Button_ConsAdic_Consultar_3.setFont(new java.awt.Font("Yu Gothic UI", 0, 18)); // NOI18N
+        Button_ConsAdic_Consultar_3.setText("Consultar");
+        Button_ConsAdic_Consultar_3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton20ActionPerformed(evt);
+                Button_ConsAdic_Consultar_3ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_ConsultasAdicionalesLayout = new javax.swing.GroupLayout(Panel_ConsultasAdicionales);
+        Panel_ConsultasAdicionales.setLayout(Panel_ConsultasAdicionalesLayout);
+        Panel_ConsultasAdicionalesLayout.setHorizontalGroup(
+            Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addComponent(jLabel26)
+                .addGroup(Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
+                        .addComponent(Label_ConsAdic_BusqLibros)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addComponent(jLabel27)
+                    .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
+                        .addComponent(Label_ConsAdic_Autor)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ComboBox_ConsAdic_Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton18)
+                        .addComponent(Button_ConsAdic_Consultar_1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                        .addComponent(jLabel28)
+                        .addComponent(Label_ConsAdic_Formato)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ComboBox_ConsAdic_Formato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton19)
+                        .addComponent(Button_ConsAdic_Consultar_2)
                         .addGap(40, 40, 40))))
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel11Layout.createSequentialGroup()
+            .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
+                .addGroup(Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addGroup(Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Scroll_ConsAdic_1, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel29)))))
-                    .addGroup(jPanel11Layout.createSequentialGroup()
+                                .addGroup(Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Scroll_ConsAdic_2, javax.swing.GroupLayout.PREFERRED_SIZE, 759, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(Label_ConsAdic_AutLibDifEdit)))))
+                    .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
                         .addGap(345, 345, 345)
-                        .addComponent(jButton20)))
+                        .addComponent(Button_ConsAdic_Consultar_3)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
+        Panel_ConsultasAdicionalesLayout.setVerticalGroup(
+            Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_ConsultasAdicionalesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel26)
+                .addComponent(Label_ConsAdic_BusqLibros)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(jComboBox10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton18)
-                    .addComponent(jLabel28)
-                    .addComponent(jComboBox11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton19))
+                .addGroup(Panel_ConsultasAdicionalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Label_ConsAdic_Autor)
+                    .addComponent(ComboBox_ConsAdic_Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Button_ConsAdic_Consultar_1)
+                    .addComponent(Label_ConsAdic_Formato)
+                    .addComponent(ComboBox_ConsAdic_Formato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Button_ConsAdic_Consultar_2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Scroll_ConsAdic_1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel29)
+                .addComponent(Label_ConsAdic_AutLibDifEdit)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Scroll_ConsAdic_2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton20)
+                .addComponent(Button_ConsAdic_Consultar_3)
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        TabbedPane_Tabla.addTab("Consultas Adicionales", jPanel11);
+        TabbedPane_Tabla.addTab("Consultas Adicionales", Panel_ConsultasAdicionales);
 
         javax.swing.GroupLayout Panel_TablaLayout = new javax.swing.GroupLayout(Panel_Tabla);
         Panel_Tabla.setLayout(Panel_TablaLayout);
@@ -1393,13 +1412,29 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_RadioB_Libro_DigitalActionPerformed
 
     private void Button_Stand_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Stand_CrearActionPerformed
-        // TODO add your handling code here:
+   
+    try {
         long id = Long.parseLong(Text_Stand_ID.getText());
         double price = Double.parseDouble(Text_Stand_Precio.getText());
+
         
-        this.stands.add(new Stand(id, price));
+        Response<Stand> response = standController.crearStand(id, price);
+
+       
+        javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
+
+        if (response.isSuccess()) {
         
-        ComboBox_Comprar_ID.addItem("" + id);
+            Text_Stand_ID.setText("");
+            Text_Stand_Precio.setText("");
+
+          
+            ComboBox_Comprar_ID.addItem(String.valueOf(id));
+        }
+
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Los valores del ID y Precio deben ser números válidos");
+}
     }//GEN-LAST:event_Button_Stand_CrearActionPerformed
 
     private void Button_Persona_CrearAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearAutorActionPerformed
@@ -1411,7 +1446,7 @@ public class MegaferiaFrame extends javax.swing.JFrame {
         this.authors.add(new Author(id, firstname, lastname));
         
         ComboBox_Libro_Autores.addItem(id + " - " + firstname + " " + lastname);
-        jComboBox10.addItem(id + " - " + firstname + " " + lastname);
+        ComboBox_ConsAdic_Autor.addItem(id + " - " + firstname + " " + lastname);
     }//GEN-LAST:event_Button_Persona_CrearAutorActionPerformed
 
     private void Button_Persona_CrearGerenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearGerenteActionPerformed
@@ -1437,25 +1472,42 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_Button_Persona_CrearNarradorActionPerformed
 
     private void Button_Editorial_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Editorial_CrearActionPerformed
-        // TODO add your handling code here:
+    try {
         String nit = Text_Editorial_NIT.getText();
         String name = Text_Editorial_Nombre.getText();
         String address = Text_Editorial_Direccion.getText();
-        String[] managerData = ComboBox_Editorial_Gerente.getItemAt(ComboBox_Editorial_Gerente.getSelectedIndex()).split(" - ");
-        
+
+        String selectedManager = ComboBox_Editorial_Gerente
+                .getItemAt(ComboBox_Editorial_Gerente.getSelectedIndex());
+        String[] managerData = selectedManager.split(" - ");
         long managerId = Long.parseLong(managerData[0]);
+
         
-        Manager manager = null;
-        for (Manager manag : this.managers) {
-            if (manag.getId() == managerId) {
-                manager = manag;
-            }
+        Manager manager = model.getManagerById(managerId);
+
+ 
+        Response<Publisher> response = publisherController.crearEditorial(nit, name, address, manager);
+
+        javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
+
+        if (response.isSuccess()) {
+
+
+            Text_Editorial_NIT.setText("");
+            Text_Editorial_Nombre.setText("");
+            Text_Editorial_Direccion.setText("");
+
+    
+            Publisher createdPublisher = response.getData();
+
+            ComboBox_Libro_Editorial.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")");
+            ComboBox_Comprar_Editoriales.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")");
         }
-        
-        this.publishers.add(new Publisher(nit, name, address, manager));
-        
-        ComboBox_Libro_Editorial.addItem(name + " (" + nit + ")");
-        ComboBox_Comprar_Editoriales.addItem(name + " (" + nit + ")");
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+                "Error inesperado, revise los datos ingresados");
+    
     }//GEN-LAST:event_Button_Editorial_CrearActionPerformed
 
     private void Button_Libro_AgregarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Libro_AgregarAutorActionPerformed
@@ -1610,9 +1662,9 @@ public class MegaferiaFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_Button_ShowPers_ConsultarActionPerformed
 
-    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+    private void Button_ShowStan_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowStan_ConsultarActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        DefaultTableModel model = (DefaultTableModel) Table_ShowStands.getModel();
         model.setRowCount(0);
         for (Stand stand : this.stands) {
             String publishers = "";
@@ -1624,13 +1676,13 @@ public class MegaferiaFrame extends javax.swing.JFrame {
             }
             model.addRow(new Object[]{stand.getId(), stand.getPrice(), stand.getPublisherQuantity() > 0 ? "Si" : "No", publishers});
         }
-    }//GEN-LAST:event_jButton14ActionPerformed
+    }//GEN-LAST:event_Button_ShowStan_ConsultarActionPerformed
 
-    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+    private void Button_ShowLib_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowLib_ConsultarActionPerformed
         // TODO add your handling code here:
-        String search = jComboBox9.getItemAt(jComboBox9.getSelectedIndex());
+        String search = ComboBox_ShowLib_Libros.getItemAt(ComboBox_ShowLib_Libros.getSelectedIndex());
         
-        DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
+        DefaultTableModel model = (DefaultTableModel) Table_ShowLibros.getModel();
         model.setRowCount(0);
         
         if (search.equals("Libros Impresos")) {
@@ -1683,11 +1735,11 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_jButton15ActionPerformed
+    }//GEN-LAST:event_Button_ShowLib_ConsultarActionPerformed
 
-    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+    private void Button_ConsAdic_Consultar_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ConsAdic_Consultar_1ActionPerformed
         // TODO add your handling code here:
-        String[] authorData = jComboBox10.getItemAt(jComboBox10.getSelectedIndex()).split(" - ");
+        String[] authorData = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex()).split(" - ");
         long authorId = Long.parseLong(authorData[0]);
         
         Author author = null;
@@ -1697,7 +1749,7 @@ public class MegaferiaFrame extends javax.swing.JFrame {
             }
         }
         
-        DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
+        DefaultTableModel model = (DefaultTableModel) Table_ConsAdic_1.getModel();
         model.setRowCount(0);
         
         for (Book book : author.getBooks()) { 
@@ -1715,13 +1767,13 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
             }
         }
-    }//GEN-LAST:event_jButton18ActionPerformed
+    }//GEN-LAST:event_Button_ConsAdic_Consultar_1ActionPerformed
 
-    private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
+    private void Button_ConsAdic_Consultar_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ConsAdic_Consultar_2ActionPerformed
         // TODO add your handling code here:
-        String format = jComboBox11.getItemAt(jComboBox11.getSelectedIndex());
+        String format = ComboBox_ConsAdic_Formato.getItemAt(ComboBox_ConsAdic_Formato.getSelectedIndex());
         
-        DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
+        DefaultTableModel model = (DefaultTableModel) Table_ConsAdic_1.getModel();
         model.setRowCount(0);
         
         for (Book book : this.books) { 
@@ -1741,9 +1793,9 @@ public class MegaferiaFrame extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_jButton19ActionPerformed
+    }//GEN-LAST:event_Button_ConsAdic_Consultar_2ActionPerformed
 
-    private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
+    private void Button_ConsAdic_Consultar_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ConsAdic_Consultar_3ActionPerformed
         // TODO add your handling code here:
         ArrayList<Author> authorsMax = new ArrayList<>();
         int maxPublishers = -1;
@@ -1757,13 +1809,13 @@ public class MegaferiaFrame extends javax.swing.JFrame {
             }
         }
         
-        DefaultTableModel model = (DefaultTableModel) jTable6.getModel();
+        DefaultTableModel model = (DefaultTableModel) Table_ConsAdic_2.getModel();
         model.setRowCount(0);
         
         for (Author author : authorsMax) {
             model.addRow(new Object[]{author.getId(), author.getFullname(), maxPublishers});
         }
-    }//GEN-LAST:event_jButton20ActionPerformed
+    }//GEN-LAST:event_Button_ConsAdic_Consultar_3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1789,6 +1841,9 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private javax.swing.JButton Button_Comprar_Comprar;
     private javax.swing.JButton Button_Comprar_EliminarEdit;
     private javax.swing.JButton Button_Comprar_EliminarStand;
+    private javax.swing.JButton Button_ConsAdic_Consultar_1;
+    private javax.swing.JButton Button_ConsAdic_Consultar_2;
+    private javax.swing.JButton Button_ConsAdic_Consultar_3;
     private javax.swing.JButton Button_Editorial_Crear;
     private javax.swing.JButton Button_Libro_AgregarAutor;
     private javax.swing.JButton Button_Libro_Crear;
@@ -1797,19 +1852,28 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private javax.swing.JButton Button_Persona_CrearGerente;
     private javax.swing.JButton Button_Persona_CrearNarrador;
     private javax.swing.JButton Button_ShowEdit_Consultar;
+    private javax.swing.JButton Button_ShowLib_Consultar;
     private javax.swing.JButton Button_ShowPers_Consultar;
+    private javax.swing.JButton Button_ShowStan_Consultar;
     private javax.swing.JButton Button_Stand_Crear;
     private javax.swing.JComboBox<String> ComboBox_Comprar_Editoriales;
     private javax.swing.JComboBox<String> ComboBox_Comprar_ID;
+    private javax.swing.JComboBox<String> ComboBox_ConsAdic_Autor;
+    private javax.swing.JComboBox<String> ComboBox_ConsAdic_Formato;
     private javax.swing.JComboBox<String> ComboBox_Editorial_Gerente;
     private javax.swing.JComboBox<String> ComboBox_Libro_Autores;
     private javax.swing.JComboBox<String> ComboBox_Libro_Editorial;
     private javax.swing.JComboBox<String> ComboBox_Libro_Formato;
     private javax.swing.JComboBox<String> ComboBox_Libro_Genero;
     private javax.swing.JComboBox<String> ComboBox_Libro_Narrador;
+    private javax.swing.JComboBox<String> ComboBox_ShowLib_Libros;
     private javax.swing.JButton Label_Comprar_AgregarEdit;
     private javax.swing.JLabel Label_Comprar_Editoriales;
     private javax.swing.JLabel Label_Comprar_ID;
+    private javax.swing.JLabel Label_ConsAdic_AutLibDifEdit;
+    private javax.swing.JLabel Label_ConsAdic_Autor;
+    private javax.swing.JLabel Label_ConsAdic_BusqLibros;
+    private javax.swing.JLabel Label_ConsAdic_Formato;
     private javax.swing.JLabel Label_Editorial_Direccion;
     private javax.swing.JLabel Label_Editorial_Gerente;
     private javax.swing.JLabel Label_Editorial_NIT;
@@ -1830,14 +1894,18 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel Label_Persona_Apellido;
     private javax.swing.JLabel Label_Persona_ID;
     private javax.swing.JLabel Label_Persona_Nombre;
+    private javax.swing.JLabel Label_ShowLib_Libros;
     private javax.swing.JLabel Label_Stand_ID;
     private javax.swing.JLabel Label_Stand_Precio;
     private javax.swing.JPanel Panel_Comprar;
+    private javax.swing.JPanel Panel_ConsultasAdicionales;
     private javax.swing.JPanel Panel_Editorial;
     private javax.swing.JPanel Panel_Libro;
     private javax.swing.JPanel Panel_Persona;
     private javax.swing.JPanel Panel_ShowEdit;
+    private javax.swing.JPanel Panel_ShowLibros;
     private javax.swing.JPanel Panel_ShowPersonas;
+    private javax.swing.JPanel Panel_ShowStands;
     private javax.swing.JPanel Panel_Stand;
     private javax.swing.JPanel Panel_Tabla;
     private javax.swing.JRadioButton RadioB_Libro_AudioLibro;
@@ -1845,12 +1913,20 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton RadioB_Libro_Impreso;
     private javax.swing.JScrollPane Scroll_Comprar_1;
     private javax.swing.JScrollPane Scroll_Comprar_2;
+    private javax.swing.JScrollPane Scroll_ConsAdic_1;
+    private javax.swing.JScrollPane Scroll_ConsAdic_2;
     private javax.swing.JScrollPane Scroll_Libro;
     private javax.swing.JScrollPane Scroll_ShowEdit;
+    private javax.swing.JScrollPane Scroll_ShowLibros;
     private javax.swing.JScrollPane Scroll_ShowPersonas;
+    private javax.swing.JScrollPane Scroll_ShowStands;
     private javax.swing.JTabbedPane TabbedPane_Tabla;
+    private javax.swing.JTable Table_ConsAdic_1;
+    private javax.swing.JTable Table_ConsAdic_2;
     private javax.swing.JTable Table_ShowEdit;
+    private javax.swing.JTable Table_ShowLibros;
     private javax.swing.JTable Table_ShowPersonas;
+    private javax.swing.JTable Table_ShowStands;
     private javax.swing.JTextArea Text_Comprar_1;
     private javax.swing.JTextArea Text_Comprar_2;
     private javax.swing.JTextField Text_Editorial_Direccion;
@@ -1869,29 +1945,5 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private javax.swing.JTextField Text_Persona_Nombre;
     private javax.swing.JTextField Text_Stand_ID;
     private javax.swing.JTextField Text_Stand_Precio;
-    private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
-    private javax.swing.JButton jButton18;
-    private javax.swing.JButton jButton19;
-    private javax.swing.JButton jButton20;
-    private javax.swing.JComboBox<String> jComboBox10;
-    private javax.swing.JComboBox<String> jComboBox11;
-    private javax.swing.JComboBox<String> jComboBox9;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JScrollPane jScrollPane8;
-    private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTable jTable4;
-    private javax.swing.JTable jTable5;
-    private javax.swing.JTable jTable6;
     // End of variables declaration//GEN-END:variables
 }
