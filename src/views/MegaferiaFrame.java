@@ -21,16 +21,10 @@ import controllers.StandController;
 import core.LibraryModel;
 import utils.Response;
 import controllers.PublisherController;
+import core.ModelObserver;
+import core.ModelEvent;
 
-
-
-
-/**
- *
- * @author jjlora
- * @author edangulo
- */
-public class MegaferiaFrame extends javax.swing.JFrame {
+public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver {
 
     private ArrayList<Stand> stands;
     private ArrayList<Author> authors;
@@ -38,31 +32,59 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     private ArrayList<Narrator> narrators;
     private ArrayList<Publisher> publishers;
     private ArrayList<Book> books;
+
     private LibraryModel model;
     private StandController standController;
     private PublisherController publisherController;
 
-
-
-
-    
-    
-    
-    /**
-     * Creates new form MegaferiaFrame
-     */
     public MegaferiaFrame() {
         initComponents();
         setLocationRelativeTo(null);
+
         this.stands = new ArrayList<>();
         this.authors = new ArrayList<>();
         this.managers = new ArrayList<>();
         this.narrators = new ArrayList<>();
         this.publishers = new ArrayList<>();
         this.books = new ArrayList<>();
+
         this.model = new LibraryModel();
         this.standController = new StandController(model);
         this.publisherController = new PublisherController(model);
+
+        this.model.addObserver(this);
+
+        cargarManagersComboBox();
+        actualizarCombosCompra();
+    }
+
+    @Override
+    public void modelChanged(ModelEvent event) {
+        actualizarCombosCompra();
+    }
+
+    private void cargarManagersComboBox() {
+        ComboBox_Editorial_Gerente.removeAllItems();
+        for (Manager m : model.getManagers()) {
+            ComboBox_Editorial_Gerente.addItem(
+                m.getId() + " - " + m.getFirstname() + " " + m.getLastname()
+            );
+        }
+    }
+
+    private void actualizarCombosCompra() {
+        ComboBox_Comprar_ID.removeAllItems();
+        ComboBox_Comprar_Editoriales.removeAllItems();
+
+        for (Stand s : model.getStands()) {
+            ComboBox_Comprar_ID.addItem(String.valueOf(s.getId()));
+        }
+
+        for (Publisher p : model.getPublishers()) {
+            ComboBox_Comprar_Editoriales.addItem(
+                p.getName() + " (" + p.getNit() + ")"
+            );
+        }
     }
 
     /**
@@ -1412,29 +1434,27 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_RadioB_Libro_DigitalActionPerformed
 
     private void Button_Stand_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Stand_CrearActionPerformed
-   
+                                                     
     try {
         long id = Long.parseLong(Text_Stand_ID.getText());
         double price = Double.parseDouble(Text_Stand_Precio.getText());
 
-        
         Response<Stand> response = standController.crearStand(id, price);
 
-       
         javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
 
         if (response.isSuccess()) {
-        
             Text_Stand_ID.setText("");
             Text_Stand_Precio.setText("");
 
-          
-            ComboBox_Comprar_ID.addItem(String.valueOf(id));
         }
-
     } catch (NumberFormatException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Los valores del ID y Precio deben ser números válidos");
-}
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Los valores del ID y Precio deben ser números válidos"
+        );
+    }
+
     }//GEN-LAST:event_Button_Stand_CrearActionPerformed
 
     private void Button_Persona_CrearAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearAutorActionPerformed
@@ -1450,14 +1470,29 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_Button_Persona_CrearAutorActionPerformed
 
     private void Button_Persona_CrearGerenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearGerenteActionPerformed
-        // TODO add your handling code here:
+    try {
         long id = Long.parseLong(Text_Persona_ID.getText());
         String firstname = Text_Persona_Nombre.getText();
         String lastname = Text_Persona_Apellido.getText();
-        
-        this.managers.add(new Manager(id, firstname, lastname));
-        
-        ComboBox_Editorial_Gerente.addItem(id + " - " + firstname + " " + lastname);
+
+        Manager manager = new Manager(id, firstname, lastname);
+        model.addManager(manager);   // se guarda en el modelo
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Gerente creado correctamente");
+
+        Text_Persona_ID.setText("");
+        Text_Persona_Nombre.setText("");
+        Text_Persona_Apellido.setText("");
+
+        // Actualiza combo de gerentes
+        cargarManagersComboBox();
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Datos inválidos, verifique la información"
+        );
+    }
     }//GEN-LAST:event_Button_Persona_CrearGerenteActionPerformed
 
     private void Button_Persona_CrearNarradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearNarradorActionPerformed
@@ -1507,7 +1542,7 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     } catch (Exception e) {
         javax.swing.JOptionPane.showMessageDialog(this,
                 "Error inesperado, revise los datos ingresados");
-    
+    }
     }//GEN-LAST:event_Button_Editorial_CrearActionPerformed
 
     private void Button_Libro_AgregarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Libro_AgregarAutorActionPerformed
@@ -1607,35 +1642,34 @@ public class MegaferiaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_Button_Comprar_EliminarEditActionPerformed
 
     private void Button_Comprar_ComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Comprar_ComprarActionPerformed
-        // TODO add your handling code here:
-        String[] standIds = Text_Comprar_1.getText().split("\n");
-        String[] publishersData = Text_Comprar_2.getText().split("\n");
-        
-        ArrayList<Stand> stands = new ArrayList<>();
-        for (String standId : standIds) {
-            for (Stand stand : this.stands) {
-                if (stand.getId() == Long.parseLong(standId)) {
-                    stands.add(stand);
-                }
+                                                     
+    try {
+        String standIdStr = (String) ComboBox_Comprar_ID.getSelectedItem();
+        long standId = Long.parseLong(standIdStr);
+
+        String[] lineas = Text_Comprar_2.getText().split("\n");
+        ArrayList<String> nits = new ArrayList<>();
+
+        for (String linea : lineas) {
+            if (linea.contains("(") && linea.contains(")")) {
+                String nit = linea.substring(
+                    linea.indexOf("(") + 1,
+                    linea.indexOf(")")
+                );
+                nits.add(nit);
             }
         }
-        
-        ArrayList<Publisher> publishers = new ArrayList<>();
-        for (String publisherData : publishersData) {
-            String publisherNit = publisherData.split(" ")[1].replace("(", "").replace(")", "");
-            for (Publisher publisher : this.publishers) {
-                if (publisher.getNit().equals(publisherNit)) {
-                    publishers.add(publisher);
-                }
-            }
-        }
-        
-        for (Stand stand : stands) {
-            for (Publisher publisher : publishers) {
-                stand.addPublisher(publisher);
-                publisher.addStand(stand);
-            }
-        }
+
+        Response<Stand> response = standController.comprarStand(standId, nits);
+
+        javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Error al procesar la compra: " + e.getMessage()
+        );
+    }
     }//GEN-LAST:event_Button_Comprar_ComprarActionPerformed
 
     private void Button_ShowEdit_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowEdit_ConsultarActionPerformed
