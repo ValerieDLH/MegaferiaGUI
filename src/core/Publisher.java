@@ -4,15 +4,16 @@
  */
 package core;
 
-import java.util.ArrayList;
-
 /**
  *
- * @author edangulo
+ * @author valeriedelahoz
  */
+
+import java.util.ArrayList;
+
 public class Publisher {
-    
-    private final String nit;
+
+    private String nit;
     private String name;
     private String address;
     private Manager manager;
@@ -26,8 +27,22 @@ public class Publisher {
         this.manager = manager;
         this.books = new ArrayList<>();
         this.stands = new ArrayList<>();
-        
-        this.manager.setPublisher(this);
+    }
+
+    public void addBook(Book book) {
+        this.books.add(book);
+    }
+
+    public void addStand(Stand stand) {
+        this.stands.add(stand);
+    }
+
+    public int getStandQuantity() {
+        return stands.size();
+    }
+
+    public int getBookQuantity() {
+        return books.size();
     }
 
     public String getNit() {
@@ -45,17 +60,14 @@ public class Publisher {
     public Manager getManager() {
         return manager;
     }
-    
-    public int getStandQuantity() {
-        return this.stands.size();
+
+    public ArrayList<Book> getBooks() {
+        return books;
     }
-    
-    public void addBook(Book book) {
-        this.books.add(book);
+
+    public ArrayList<Stand> getStands() {
+        return stands;
     }
-    
-    public void addStand(Stand stand) {
-        this.stands.add(stand);
-    }
-    
 }
+
+

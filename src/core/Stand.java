@@ -10,6 +10,9 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
+
+import java.util.ArrayList;
+
 public class Stand {
     
     private long id;
@@ -37,9 +40,13 @@ public class Stand {
     public ArrayList<Publisher> getPublishers() {
         return publishers;
     }
-    
+
+    public void setPublishers(ArrayList<Publisher> publishers) {
+        this.publishers = publishers;
+    }
+
     public int getPublisherQuantity() {
         return this.publishers.size();
     }
-    
 }
+

@@ -23,6 +23,9 @@ import utils.Response;
 import controllers.PublisherController;
 import core.ModelObserver;
 import core.ModelEvent;
+import controllers.BookController;
+import javax.swing.JOptionPane;
+
 
 public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver {
 
@@ -36,6 +39,9 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     private LibraryModel model;
     private StandController standController;
     private PublisherController publisherController;
+    private BookController bookController;
+    
+
 
     public MegaferiaFrame() {
         initComponents();
@@ -53,6 +59,9 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         this.publisherController = new PublisherController(model);
 
         this.model.addObserver(this);
+        this.bookController = new BookController(model);
+
+
 
         cargarManagersComboBox();
         actualizarCombosCompra();
@@ -61,7 +70,12 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     @Override
     public void modelChanged(ModelEvent event) {
         actualizarCombosCompra();
+        if (event.getType().equals(ModelEvent.BOOK_CREATED)) {
+    actualizarTablaLibros();
+}
     }
+    
+    
 
     private void cargarManagersComboBox() {
         ComboBox_Editorial_Gerente.removeAllItems();
@@ -86,6 +100,22 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
             );
         }
     }
+    
+    private void actualizarTablaLibros() {
+    DefaultTableModel model = (DefaultTableModel) Table_ShowEdit.getModel();
+    model.setRowCount(0);
+
+    for (Book b : this.model.getBooks()) {
+        model.addRow(new Object[]{
+            b.getIsbn(),
+            b.getTitle(),
+            b.getGenre(),
+            b.getPublisher().getName(),
+            b.getValue()
+        });
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1559,62 +1589,57 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
     private void Button_Libro_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Libro_CrearActionPerformed
         // TODO add your handling code here:
+        try {
         String title = Text_Libro_Titulo.getText();
-        String[] authorsData = Text_Libro.getText().split("\n");
         String isbn = Text_Libro_ISBN.getText();
         String genre = ComboBox_Libro_Genero.getItemAt(ComboBox_Libro_Genero.getSelectedIndex());
         String format = ComboBox_Libro_Formato.getItemAt(ComboBox_Libro_Formato.getSelectedIndex());
         double value = Double.parseDouble(Text_Libro_Valor.getText());
-        String publisherData = ComboBox_Libro_Editorial.getItemAt(ComboBox_Libro_Editorial.getSelectedIndex());
-        
-        ArrayList<Author> authors = new ArrayList<>();
-        for (String authorData : authorsData) {
-            long authorId = Long.parseLong(authorData.split(" - ")[0]);
-            for (Author author : this.authors) {
-                if (author.getId() == authorId) {
-                    authors.add(author);
-                }
-            }
+        String publisherNit = ComboBox_Libro_Editorial.getItemAt(
+                ComboBox_Libro_Editorial.getSelectedIndex()
+        ).split("\\(")[1].replace(")", "");
+
+        // Convertir autores (IDs)
+        ArrayList<Long> authorIds = new ArrayList<>();
+        String[] authorsData = Text_Libro.getText().split("\n");
+        for (String a : authorsData) {
+            long authorId = Long.parseLong(a.split(" - ")[0]);
+            authorIds.add(authorId);
         }
-        
-        String publisherNit = publisherData.split(" ")[1].replace("(", "").replace(")", "");
-        
-        Publisher publisher = null;
-        for (Publisher publish : this.publishers) {
-            if (publish.getNit().equals(publisherNit)) {
-                publisher = publish;
-            }
-        }
-        
+
+        Response<Book> response;
+
         if (RadioB_Libro_Impreso.isSelected()) {
             int pages = Integer.parseInt(Text_Libro_Paginas.getText());
             int copies = Integer.parseInt(Text_Libro_Ejemplares.getText());
-            
-            this.books.add(new PrintedBook(title, authors, isbn, genre, format, value, publisher, pages, copies));
+            response = bookController.createPrintedBook(title, authorIds, isbn, genre, format, value, publisherNit, pages, copies);
         }
-        if (RadioB_Libro_Digital.isSelected()) {
+        else if (RadioB_Libro_Digital.isSelected()) {
             String hyperlink = Text_Libro_Hipervinculo.getText();
-            if (hyperlink.equals("")) {
-                this.books.add(new DigitalBook(title, authors, isbn, genre, format, value, publisher));
-            } else {
-                this.books.add(new DigitalBook(title, authors, isbn, genre, format, value, publisher, hyperlink));
-            }
+            response = bookController.createDigitalBook(title, authorIds, isbn, genre, format, value, publisherNit, hyperlink);
         }
-        if (RadioB_Libro_AudioLibro.isSelected()) {
+        else { // Audiobook
             int duration = Integer.parseInt(Text_Libro_Duracion.getText());
-            String[] narratorData = ComboBox_Libro_Narrador.getItemAt(ComboBox_Libro_Narrador.getSelectedIndex()).split(" - ");
-            
-            long narratorId = Long.parseLong(narratorData[0]);
-            
-            Narrator narrator = null;
-            for (Narrator narrat : this.narrators) {
-                if (narrat.getId() == narratorId) {
-                    narrator = narrat;
-                }
-            }
-            
-            this.books.add(new Audiobook(title, authors, isbn, genre, format, value, publisher, duration, narrator));
+            long narratorId = Long.parseLong(ComboBox_Libro_Narrador
+                    .getItemAt(ComboBox_Libro_Narrador.getSelectedIndex())
+                    .split(" - ")[0]);
+
+            response = bookController.createAudioBook(title, authorIds, isbn, genre, format, value, publisherNit, duration, narratorId);
         }
+
+        JOptionPane.showMessageDialog(this, response.getMessage());
+
+        if (response.isSuccess()) {
+            Text_Libro_Titulo.setText("");
+            Text_Libro_ISBN.setText("");
+            Text_Libro.setText("");
+            Text_Libro_Valor.setText("");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+                "Error creando libro: " + e.getMessage());
+    }
     }//GEN-LAST:event_Button_Libro_CrearActionPerformed
 
     private void Button_Comprar_AgregarStandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Comprar_AgregarStandActionPerformed
@@ -1674,11 +1699,18 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
     private void Button_ShowEdit_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowEdit_ConsultarActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) Table_ShowEdit.getModel();
-        model.setRowCount(0);
-        for (Publisher publisher : this.publishers) {
-            model.addRow(new Object[]{publisher.getNit(), publisher.getName(), publisher.getAddress(), publisher.getManager().getFullname(), publisher.getStandQuantity()});
-        }
+      DefaultTableModel modelTable = (DefaultTableModel) Table_ShowEdit.getModel();
+modelTable.setRowCount(0);
+
+for (Publisher publisher : model.getPublishers()) {
+    modelTable.addRow(new Object[]{
+        publisher.getNit(),
+        publisher.getName(),
+        publisher.getAddress(),
+        publisher.getManager().getFullname(),
+        publisher.getStandQuantity()
+    });
+}
     }//GEN-LAST:event_Button_ShowEdit_ConsultarActionPerformed
 
     private void Button_ShowPers_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowPers_ConsultarActionPerformed
@@ -1854,21 +1886,6 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        System.setProperty("flatlaf.useNativeLibrary", "false");
-        
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception ex) {
-            System.err.println("Failed to initialize LaF");
-        }
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MegaferiaFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Button_Comprar_AgregarStand;
