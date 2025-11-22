@@ -37,5 +37,26 @@ public class PersonController {
         model.addNarrator(narrator);
         return new Response<>(true, "Narrador creado correctamente", narrator);
     }
+    
+    public Response<Manager> crearGerente(long id, String firstname, String lastname) {
+
+    if (id <= 0) {
+        return new Response<>(false, "El ID debe ser mayor que 0", null);
+    }
+
+    if (firstname.isBlank() || lastname.isBlank()) {
+        return new Response<>(false, "Nombre y apellido no pueden estar vacíos", null);
+    }
+
+    if (model.getManagerById(id) != null) {
+        return new Response<>(false, "Ya existe un gerente con ese ID", null);
+    }
+
+    Manager manager = new Manager(id, firstname, lastname);
+    model.addManager(manager);
+
+    return new Response<>(true, "Gerente creado correctamente", manager);
+}
+
 }
 
