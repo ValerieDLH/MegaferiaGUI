@@ -25,6 +25,7 @@ import core.ModelObserver;
 import core.ModelEvent;
 import controllers.BookController;
 import javax.swing.JOptionPane;
+import controllers.PersonController;
 
 
 public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver {
@@ -40,6 +41,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     private StandController standController;
     private PublisherController publisherController;
     private BookController bookController;
+    private PersonController personController;
     
 
 
@@ -60,6 +62,8 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
         this.model.addObserver(this);
         this.bookController = new BookController(model);
+        this.personController = new PersonController(model);
+
 
 
 
@@ -1505,23 +1509,18 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         String firstname = Text_Persona_Nombre.getText();
         String lastname = Text_Persona_Apellido.getText();
 
-        Manager manager = new Manager(id, firstname, lastname);
-        model.addManager(manager);   // se guarda en el modelo
+        Response<Manager> response = personController.crearGerente(id, firstname, lastname);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Gerente creado correctamente");
+        javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
 
-        Text_Persona_ID.setText("");
-        Text_Persona_Nombre.setText("");
-        Text_Persona_Apellido.setText("");
-
-        // Actualiza combo de gerentes
-        cargarManagersComboBox();
+        if (response.isSuccess()) {
+            Text_Persona_ID.setText("");
+            Text_Persona_Nombre.setText("");
+            Text_Persona_Apellido.setText("");
+        }
 
     } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Datos inválidos, verifique la información"
-        );
+        javax.swing.JOptionPane.showMessageDialog(this, "Datos inválidos, verifique la información.");
     }
     }//GEN-LAST:event_Button_Persona_CrearGerenteActionPerformed
 
