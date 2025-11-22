@@ -8,8 +8,12 @@ package core;
  *
  * @author edangulo
  */
+
+
+
+
 public class Manager extends Person {
-    
+
     private Publisher publisher;
 
     public Manager(long id, String firstname, String lastname) {
@@ -21,7 +25,9 @@ public class Manager extends Person {
     }
 
     public void setPublisher(Publisher publisher) {
+        if (publisher == null)
+            throw new IllegalArgumentException("Editorial null.");
+
         this.publisher = publisher;
     }
-    
 }

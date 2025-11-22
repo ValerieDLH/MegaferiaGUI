@@ -8,13 +8,24 @@ package core;
  *
  * @author edangulo
  */
+
 public abstract class Person {
-    
-    protected final long id;
+
+    protected long id;
     protected String firstname;
     protected String lastname;
 
     public Person(long id, String firstname, String lastname) {
+
+        if (id < 0 || String.valueOf(id).length() > 15)
+            throw new IllegalArgumentException("ID inválido.");
+
+        if (firstname == null || firstname.isBlank())
+            throw new IllegalArgumentException("Nombre vacío.");
+
+        if (lastname == null || lastname.isBlank())
+            throw new IllegalArgumentException("Apellido vacío.");
+
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -31,9 +42,8 @@ public abstract class Person {
     public String getLastname() {
         return lastname;
     }
-    
+
     public String getFullname() {
         return firstname + " " + lastname;
     }
-    
 }

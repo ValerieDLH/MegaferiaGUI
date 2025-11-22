@@ -10,13 +10,25 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
+
+
 public class PrintedBook extends Book {
-    
+
     private int pages;
     private int copies;
 
-    public PrintedBook(String title, ArrayList<Author> authors, String isbn, String genre, String format, double value, Publisher publisher, int pages, int copies) {
+    public PrintedBook(String title, ArrayList<Author> authors, String isbn,
+            String genre, String format, double value, Publisher publisher,
+            int pages, int copies) {
+
         super(title, authors, isbn, genre, format, value, publisher);
+
+        if (pages <= 0)
+            throw new IllegalArgumentException("Páginas deben ser > 0.");
+
+        if (copies <= 0)
+            throw new IllegalArgumentException("Copias deben ser > 0.");
+
         this.pages = pages;
         this.copies = copies;
     }
@@ -28,5 +40,5 @@ public class PrintedBook extends Book {
     public int getCopies() {
         return copies;
     }
-    
 }
+
