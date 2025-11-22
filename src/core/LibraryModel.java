@@ -9,7 +9,7 @@ package core;
  * @author valeriedelahoz
  */
 
-
+//Libreria modelo
 import java.util.ArrayList;
 import java.util.List;
 
