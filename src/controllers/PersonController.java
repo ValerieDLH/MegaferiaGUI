@@ -38,6 +38,7 @@ public class PersonController {
         return new Response<>(true, "Narrador creado correctamente", narrator);
     }
     
+    //Creacion de gerentes
     public Response<Manager> crearGerente(long id, String firstname, String lastname) {
 
     if (id <= 0) {
