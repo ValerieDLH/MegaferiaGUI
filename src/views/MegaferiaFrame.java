@@ -1520,8 +1520,10 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         }
 
     } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Datos inválidos, verifique la información.");
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Error al crear gerente: " + e.getMessage());
     }
+
     }//GEN-LAST:event_Button_Persona_CrearGerenteActionPerformed
 
     private void Button_Persona_CrearNarradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearNarradorActionPerformed
@@ -1713,18 +1715,34 @@ for (Publisher publisher : model.getPublishers()) {
     }//GEN-LAST:event_Button_ShowEdit_ConsultarActionPerformed
 
     private void Button_ShowPers_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowPers_ConsultarActionPerformed
-        // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) Table_ShowPersonas.getModel();
-        model.setRowCount(0);
-        for (Author author : this.authors) {
-            model.addRow(new Object[]{author.getId(), author.getFullname(), "Autor", "-", author.getBookQuantity()});
-        }
-        for (Manager manager : this.managers) {
-            model.addRow(new Object[]{manager.getId(), manager.getFullname(), "Gerente", manager.getPublisher().getName(), 0});
-        }
-        for (Narrator narrator : this.narrators) {
-            model.addRow(new Object[]{narrator.getId(), narrator.getFullname(), "Narrador", "-", narrator.getBookQuantity()});
-        }
+        DefaultTableModel modelTable = (DefaultTableModel) Table_ShowPersonas.getModel();
+    modelTable.setRowCount(0);
+
+    for (Manager m : model.getManagers()) {
+        modelTable.addRow(new Object[]{
+            m.getId(),
+            m.getFirstname() + " " + m.getLastname(),
+            "Gerente"
+        });
+    }
+
+
+    for (Author a : model.getAuthors()) {
+        modelTable.addRow(new Object[]{
+            a.getId(),
+            a.getFirstname() + " " + a.getLastname(),
+            "Autor"
+        });
+    }
+
+    
+    for (Narrator n : model.getNarrators()) {
+        modelTable.addRow(new Object[]{
+            n.getId(),
+            n.getFirstname() + " " + n.getLastname(),
+            "Narrador"
+        });
+    }
     }//GEN-LAST:event_Button_ShowPers_ConsultarActionPerformed
 
     private void Button_ShowStan_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowStan_ConsultarActionPerformed
