@@ -70,14 +70,24 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         cargarManagersComboBox();
         actualizarCombosCompra();
     }
-
+    
+    
+    
     @Override
     public void modelChanged(ModelEvent event) {
-        actualizarCombosCompra();
-        if (event.getType().equals(ModelEvent.BOOK_CREATED)) {
-    actualizarTablaLibros();
-}
+
+    if (event.getType().equals(ModelEvent.BOOK_CREATED)) {
+        actualizarTablaLibros();
     }
+
+    if (event.getType().equals(ModelEvent.MANAGER_CREATED)) {
+        cargarManagersComboBox(); 
+    }
+
+    actualizarCombosCompra();
+}
+
+
     
     
 
