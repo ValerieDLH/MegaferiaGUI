@@ -75,7 +75,7 @@ Button_ShowStan_Consultar.setEnabled(false);
 Button_ShowLib_Consultar.setEnabled(false);
 Button_ConsAdic_Consultar_1.setEnabled(false);
 Button_ConsAdic_Consultar_2.setEnabled(false);
-
+ComboBox_Editorial_Gerente.addItem("Seleccione uno...");
 
 ComboBox_ShowLib_Libros.addActionListener(e -> actualizarTablaLibros());
 
@@ -1819,10 +1819,17 @@ TabbedPane_Tabla.addChangeListener(e -> {
         javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
 
         if (response.isSuccess()) {
-            Text_Persona_ID.setText("");
-            Text_Persona_Nombre.setText("");
-            Text_Persona_Apellido.setText("");
-        }
+    Manager createdManager = response.getData();
+    
+    ComboBox_Editorial_Gerente.addItem(
+        createdManager.getId() + " - " + createdManager.getFirstname() + " " + createdManager.getLastname()
+    );
+
+    Text_Persona_ID.setText("");
+    Text_Persona_Nombre.setText("");
+    Text_Persona_Apellido.setText("");
+}
+
 
     } catch (Exception e) {
         javax.swing.JOptionPane.showMessageDialog(this,
