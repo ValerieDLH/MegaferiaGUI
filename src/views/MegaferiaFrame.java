@@ -187,7 +187,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
         for (Book b : model.getBooks()) {
             if (b instanceof Audiobook) {
                 Audiobook ab = (Audiobook) b;
-                if (ab.getNarrator().getId() == n.getId()) {
+                if (ab.getNarrador().getId() == n.getId()) {
                     audioCount++;
                 }
             }
@@ -229,6 +229,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
     }
 }
 
+
     private void actualizarTablaAutoresConMasLibros() {
     DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_2.getModel();
     tableModel.setRowCount(0);
@@ -241,6 +242,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
         });
     }
 }
+
 
   
     
@@ -320,7 +322,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
             modelTable.addRow(new Object[]{
                 audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
                 audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
-                "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+                "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
             });
         }
 
@@ -345,7 +347,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
                 modelTable.addRow(new Object[]{
                     audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
                     audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
-                    "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+                    "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
                 });
             }
         }
@@ -2176,7 +2178,7 @@ if (search.equals("Audiolibros")) {
                 "-",
                 "-",
                 "-",
-                audiobook.getNarrator().getFullname(),
+                audiobook.getNarrador().getFullname(),
                 audiobook.getDuration()
             });
         }
@@ -2212,7 +2214,7 @@ if (search.equals("Todos los Libros")) {
             model.addRow(new Object[]{
                 audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
                 audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
-                "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+                "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
             });
         }
     }
@@ -2247,7 +2249,7 @@ if (search.equals("Todos los Libros")) {
                 model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
             }
             if (book instanceof Audiobook audiobook) {
-                model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()});
+                model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
             }
         }
     }//GEN-LAST:event_Button_ConsAdic_Consultar_1ActionPerformed
@@ -2272,7 +2274,7 @@ if (search.equals("Todos los Libros")) {
                     model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
                 }
                 if (book instanceof Audiobook audiobook) {
-                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()});
+                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
                 }
             }
         }
