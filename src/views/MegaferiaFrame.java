@@ -47,6 +47,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
     public MegaferiaFrame() {
         initComponents();
+        
         setLocationRelativeTo(null);
 
         this.stands = new ArrayList<>();
@@ -63,6 +64,9 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         this.model.addObserver(this);
         this.bookController = new BookController(model);
         this.personController = new PersonController(model);
+        
+        cargarEditorialesComboBox();
+
 
 
 
@@ -79,6 +83,11 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     if (event.getType().equals(ModelEvent.BOOK_CREATED)) {
         actualizarTablaLibros();
     }
+    
+    if (event.getType().equals(ModelEvent.PUBLISHER_CREATED)) {
+    cargarEditorialesComboBox();
+    }
+
 
     if (event.getType().equals(ModelEvent.MANAGER_CREATED)) {
         cargarManagersComboBox(); 
@@ -114,6 +123,17 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
             );
         }
     }
+    
+    private void cargarEditorialesComboBox() {
+    ComboBox_Libro_Editorial.removeAllItems();
+
+    for (Publisher p : model.getPublishers()) {
+        ComboBox_Libro_Editorial.addItem(
+            p.getName() + " (" + p.getNit() + ")"
+        );
+    }
+}
+
     
     private void actualizarTablaLibros() {
     DefaultTableModel model = (DefaultTableModel) Table_ShowEdit.getModel();
