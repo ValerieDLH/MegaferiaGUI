@@ -79,6 +79,9 @@ Button_ConsAdic_Consultar_3.setEnabled(false);
 ComboBox_Editorial_Gerente.addItem("Seleccione uno...");
 
 ComboBox_ShowLib_Libros.addActionListener(e -> actualizarTablaLibros());
+ComboBox_ConsAdic_Autor.addActionListener(e -> actualizarTablaLibrosPorAutor());
+ComboBox_ConsAdic_Formato.addActionListener(e -> actualizarTablaLibrosPorAutor());
+
 
 
 TabbedPane_Tabla.addChangeListener(e -> {
@@ -219,28 +222,52 @@ TabbedPane_Tabla.addChangeListener(e -> {
     DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_1.getModel();
     tableModel.setRowCount(0);
 
-    String selected = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex());
+    String selectedAuthor = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex());
+    String selectedFormat = ComboBox_ConsAdic_Formato.getItemAt(ComboBox_ConsAdic_Formato.getSelectedIndex());
 
-    if (selected.equals("Seleccione uno...")) {
+    if (selectedAuthor.equals("Seleccione uno...") || selectedFormat.equals("Seleccione uno...")) {
         return;
     }
 
-    long authorId = Long.parseLong(selected.split(" - ")[0]);
+    long authorId = Long.parseLong(selectedAuthor.split(" - ")[0]);
 
     for (Book b : model.getBooks()) {
-        for (Author a : b.getAuthors()) {
-            if (a.getId() == authorId) {
+        boolean matchAuthor = b.getAuthors().stream().anyMatch(a -> a.getId() == authorId);
+        boolean matchFormat = selectedFormat.equals("Todos") || b.getFormat().equals(selectedFormat);
+
+        if (matchAuthor && matchFormat) {
+            String authors = b.getAuthors().get(0).getFullname();
+            for (int i = 1; i < b.getAuthors().size(); i++) {
+                authors += ", " + b.getAuthors().get(i).getFullname();
+            }
+
+            if (b instanceof PrintedBook printedBook) {
                 tableModel.addRow(new Object[]{
-                    b.getTitle(),
-                    b.getIsbn(),
-                    b.getGenre(),
-                    b.getFormat(),
-                    b.getPublisher().getName()
+                    printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
+                    printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
+                    printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
+                });
+            }
+
+            if (b instanceof DigitalBook digitalBook) {
+                tableModel.addRow(new Object[]{
+                    digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
+                    digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
+                    "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
+                });
+            }
+
+            if (b instanceof Audiobook audiobook) {
+                tableModel.addRow(new Object[]{
+                    audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
+                    audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
+                    "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
                 });
             }
         }
     }
 }
+
  
 
     private void cargarAutoresConsulta() {
@@ -2254,56 +2281,58 @@ if (search.equals("Todos los Libros")) {
 
     private void Button_ConsAdic_Consultar_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ConsAdic_Consultar_1ActionPerformed
         // TODO add your handling code here:
-        String[] authorData = ComboBox_ConsAdic_Autor.getItemAt(
-        ComboBox_ConsAdic_Autor.getSelectedIndex()
-    ).split(" - ");
+        String selectedAuthor = ComboBox_ConsAdic_Autor.getSelectedItem().toString();
+    if (selectedAuthor.equals("Seleccione uno...")) return;
 
-    long authorId = Long.parseLong(authorData[0]);
-
-    Author author = null;
-    for (Author auth : model.getAuthors()) {
-        if (auth.getId() == authorId) {
-            author = auth;
-            break;
-        }
-    }
+    long authorId = Long.parseLong(selectedAuthor.split(" - ")[0]);
+    String selectedFormat = ComboBox_ConsAdic_Formato.getSelectedItem().toString();
 
     DefaultTableModel modelTable = (DefaultTableModel) Table_ConsAdic_1.getModel();
     modelTable.setRowCount(0);
 
     for (Book book : model.getBooks()) {
-        if (book.getAuthors().contains(author)) {
+        boolean hasAuthor = false;
+
+        for (Author a : book.getAuthors()) {
+            if (a.getId() == authorId) {
+                hasAuthor = true;
+                break;
+            }
+        }
+
+        if (hasAuthor && book.getFormat().equals(selectedFormat)) {
+
             String authors = book.getAuthors().get(0).getFullname();
             for (int i = 1; i < book.getAuthors().size(); i++) {
-                authors += (", " + book.getAuthors().get(i).getFullname());
+                authors += ", " + book.getAuthors().get(i).getFullname();
             }
 
             if (book instanceof PrintedBook printedBook) {
                 modelTable.addRow(new Object[]{
-                    printedBook.getTitle(), authors, printedBook.getIsbn(),
-                    printedBook.getGenre(), printedBook.getFormat(),
-                    printedBook.getValue(), printedBook.getPublisher().getName(),
+                    printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
+                    printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
                     printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
                 });
             }
+
             if (book instanceof DigitalBook digitalBook) {
                 modelTable.addRow(new Object[]{
-                    digitalBook.getTitle(), authors, digitalBook.getIsbn(),
-                    digitalBook.getGenre(), digitalBook.getFormat(),
-                    digitalBook.getValue(), digitalBook.getPublisher().getName(),
+                    digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
+                    digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
                     "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
                 });
             }
+
             if (book instanceof Audiobook audiobook) {
                 modelTable.addRow(new Object[]{
-                    audiobook.getTitle(), authors, audiobook.getIsbn(),
-                    audiobook.getGenre(), audiobook.getFormat(),
-                    audiobook.getValue(), audiobook.getPublisher().getName(),
+                    audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
+                    audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
                     "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
                 });
             }
         }
-    }
+ 
+}
 
     }//GEN-LAST:event_Button_ConsAdic_Consultar_1ActionPerformed
 
