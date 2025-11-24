@@ -42,12 +42,13 @@ public class LibraryModel {
         observers.remove(observer);
     }
 
-    private void notifyObservers(String type) {
-        ModelEvent event = new ModelEvent(this, type);
-        for (ModelObserver obs : observers) {
-            obs.modelChanged(event);
-        }
+    public void notifyObservers(String type) {
+    ModelEvent event = new ModelEvent(this, type);
+    for (ModelObserver obs : observers) {
+        obs.modelChanged(event);
     }
+}
+
 
     // ------------------- STANDS ------------------------
     public boolean existsStandId(long id) {
