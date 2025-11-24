@@ -220,6 +220,11 @@ TabbedPane_Tabla.addChangeListener(e -> {
     tableModel.setRowCount(0);
 
     String selected = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex());
+
+    if (selected.equals("Seleccione uno...")) {
+        return;
+    }
+
     long authorId = Long.parseLong(selected.split(" - ")[0]);
 
     for (Book b : model.getBooks()) {
@@ -236,6 +241,7 @@ TabbedPane_Tabla.addChangeListener(e -> {
         }
     }
 }
+ 
 
     private void cargarAutoresConsulta() {
     ComboBox_ConsAdic_Autor.removeAllItems();
