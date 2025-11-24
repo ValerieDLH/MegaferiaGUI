@@ -28,10 +28,26 @@ public class PersonController {
         return new Response<>(true, "Gerente creado correctamente", manager);
     }
 
-    public Response<Author> crearAuthor(Author author) {
-        model.addAuthor(author);
-        return new Response<>(true, "Autor creado correctamente", author);
+    public Response<Author> crearAutor(long id, String firstname, String lastname) {
+
+    if (id <= 0) {
+        return new Response<>(false, "El ID debe ser mayor que 0", null);
     }
+
+    if (firstname.isBlank() || lastname.isBlank()) {
+        return new Response<>(false, "Nombre y apellido no pueden estar vacíos", null);
+    }
+
+    if (model.getAuthorById(id) != null) {
+        return new Response<>(false, "Ya existe un autor con ese ID", null);
+    }
+
+    Author author = new Author(id, firstname, lastname);
+    model.addAuthor(author);
+
+    return new Response<>(true, "Autor creado correctamente", author);
+}
+
 
     public Response<Narrator> crearNarrator(Narrator narrator) {
         model.addNarrator(narrator);
