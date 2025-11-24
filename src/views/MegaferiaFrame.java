@@ -219,54 +219,33 @@ TabbedPane_Tabla.addChangeListener(e -> {
 }
 
     private void actualizarTablaLibrosPorAutor() {
-    DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_1.getModel();
-    tableModel.setRowCount(0);
 
-    String selectedAuthor = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex());
-    String selectedFormat = ComboBox_ConsAdic_Formato.getItemAt(ComboBox_ConsAdic_Formato.getSelectedIndex());
+    if (ComboBox_ConsAdic_Autor.getSelectedItem() == null) return;
 
-    if (selectedAuthor.equals("Seleccione uno...") || selectedFormat.equals("Seleccione uno...")) {
-        return;
-    }
+    String selectedAuthor = ComboBox_ConsAdic_Autor.getSelectedItem().toString();
+
+    if (selectedAuthor.equals("Seleccione uno...")) return;
 
     long authorId = Long.parseLong(selectedAuthor.split(" - ")[0]);
 
-    for (Book b : model.getBooks()) {
-        boolean matchAuthor = b.getAuthors().stream().anyMatch(a -> a.getId() == authorId);
-        boolean matchFormat = selectedFormat.equals("Todos") || b.getFormat().equals(selectedFormat);
+    DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_1.getModel();
+    tableModel.setRowCount(0);
 
-        if (matchAuthor && matchFormat) {
-            String authors = b.getAuthors().get(0).getFullname();
-            for (int i = 1; i < b.getAuthors().size(); i++) {
-                authors += ", " + b.getAuthors().get(i).getFullname();
-            }
-
-            if (b instanceof PrintedBook printedBook) {
+    for (Book b : this.model.getBooks()) {
+        for (Author a : b.getAuthors()) {
+            if (a.getId() == authorId) {
                 tableModel.addRow(new Object[]{
-                    printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
-                    printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
-                    printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
-                });
-            }
-
-            if (b instanceof DigitalBook digitalBook) {
-                tableModel.addRow(new Object[]{
-                    digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
-                    digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
-                    "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
-                });
-            }
-
-            if (b instanceof Audiobook audiobook) {
-                tableModel.addRow(new Object[]{
-                    audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
-                    audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
-                    "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()
+                    b.getTitle(),
+                    b.getIsbn(),
+                    b.getGenre(),
+                    b.getFormat(),
+                    b.getPublisher().getName()
                 });
             }
         }
     }
 }
+
 
  
 
