@@ -65,14 +65,39 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         this.bookController = new BookController(model);
         this.personController = new PersonController(model);
         
+        actualizarTablaPersonas();
+
         cargarEditorialesComboBox();
+        
+        Button_ShowEdit_Consultar.setEnabled(false);
+Button_ShowPers_Consultar.setEnabled(false);
+Button_ShowStan_Consultar.setEnabled(false);
+Button_ShowLib_Consultar.setEnabled(false);
+Button_ConsAdic_Consultar_1.setEnabled(false);
+Button_ConsAdic_Consultar_2.setEnabled(false);
 
 
+ComboBox_ShowLib_Libros.addActionListener(e -> actualizarTablaLibros());
 
+
+TabbedPane_Tabla.addChangeListener(e -> {
+    int index = TabbedPane_Tabla.getSelectedIndex();
+    String name = TabbedPane_Tabla.getTitleAt(index);
+
+    switch (name) {
+        case "Show Stands" -> actualizarTablaStands();
+        case "Show Editoriales" -> actualizarTablaEditoriales();
+        case "Show Personas" -> actualizarTablaPersonas();
+        case "Show Libros" -> actualizarTablaLibros();
+        case "Consultas Adicionales" -> actualizarTablasConsultas();
+
+    }
+});
 
 
         cargarManagersComboBox();
         actualizarCombosCompra();
+        cargarNarradoresComboBox();
     }
     
     
@@ -87,15 +112,257 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     if (event.getType().equals(ModelEvent.PUBLISHER_CREATED)) {
     cargarEditorialesComboBox();
     }
+    
+    if (event.getType().equals(ModelEvent.NARRATOR_CREATED)) {
+    cargarNarradoresComboBox();
+    }
 
 
     if (event.getType().equals(ModelEvent.MANAGER_CREATED)) {
         cargarManagersComboBox(); 
     }
+    if (event.getType().equals(ModelEvent.STAND_CREATED) || 
+        event.getType().equals(ModelEvent.STAND_BOUGHT)) {
+
+        actualizarTablaStands();
+    }
+    
 
     actualizarCombosCompra();
+    actualizarTablaPersonas();
+    actualizarTablaEditoriales();
+
+   
+}
+    private void actualizarTablaPersonas() {
+
+    DefaultTableModel modelTable = (DefaultTableModel) Table_ShowPersonas.getModel();
+    modelTable.setRowCount(0);
+
+  
+    for (Manager m : model.getManagers()) {
+        
+        Publisher publisher = null;
+        for (Publisher p : model.getPublishers()) {
+            if (p.getManager().getId() == m.getId()) {
+                publisher = p;
+                break;
+            }
+        }
+
+        modelTable.addRow(new Object[]{
+                m.getId(),
+                m.getFirstname() + " " + m.getLastname(),
+                "Gerente",
+                publisher != null ? publisher.getName() : "N/A",
+                0  
+        });
+    }
+
+    // Mostrar Autores
+    for (Author a : model.getAuthors()) {
+
+        int booksCount = 0;
+        for (Book b : model.getBooks()) {
+            for (Author auth : b.getAuthors()) {
+                if (auth.getId() == a.getId()) {
+                    booksCount++;
+                }
+            }
+        }
+
+        modelTable.addRow(new Object[]{
+                a.getId(),
+                a.getFirstname() + " " + a.getLastname(),
+                "Autor",
+                "-",  
+                booksCount
+        });
+    }
+
+    // Mostrar Narradores
+    for (Narrator n : model.getNarrators()) {
+
+        int audioCount = 0;
+        for (Book b : model.getBooks()) {
+            if (b instanceof Audiobook) {
+                Audiobook ab = (Audiobook) b;
+                if (ab.getNarrator().getId() == n.getId()) {
+                    audioCount++;
+                }
+            }
+        }
+
+        modelTable.addRow(new Object[]{
+                n.getId(),
+                n.getFirstname() + " " + n.getLastname(),
+                "Narrador",
+                "-", 
+                audioCount
+        });
+    }
+}
+    private void actualizarTablasConsultas() {
+    actualizarTablaLibrosPorAutor();
+    actualizarTablaAutoresConMasLibros();
 }
 
+    private void actualizarTablaLibrosPorAutor() {
+    DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_1.getModel();
+    tableModel.setRowCount(0);
+
+    String selected = ComboBox_ConsAdic_Autor.getItemAt(ComboBox_ConsAdic_Autor.getSelectedIndex());
+    long authorId = Long.parseLong(selected.split(" - ")[0]);
+
+    for (Book b : this.model.getBooks()) {
+        for (Author a : b.getAuthors()) {
+            if (a.getId() == authorId) {
+                tableModel.addRow(new Object[]{
+                    b.getTitle(),
+                    b.getIsbn(),
+                    b.getGenre(),
+                    b.getFormat(),
+                    b.getPublisher().getName()
+                });
+            }
+        }
+    }
+}
+
+    private void actualizarTablaAutoresConMasLibros() {
+    DefaultTableModel tableModel = (DefaultTableModel) Table_ConsAdic_2.getModel();
+    tableModel.setRowCount(0);
+
+    for (Author a : this.model.getAuthors()) {
+        tableModel.addRow(new Object[]{
+            a.getId(),
+            a.getFullname(),
+            a.getBooks().size()
+        });
+    }
+}
+
+  
+    
+    private void actualizarTablaEditoriales() {
+    DefaultTableModel modelTable = (DefaultTableModel) Table_ShowEdit.getModel();
+    modelTable.setRowCount(0);
+
+    for (Publisher p : model.getPublishers()) {
+        modelTable.addRow(new Object[]{
+            p.getNit(),
+            p.getName(),
+            p.getAddress(),
+            p.getManager().getFullname(),
+            p.getBooks().size() 
+        });
+    }
+}
+    private void actualizarTablaStands() {
+    DefaultTableModel modelTable = (DefaultTableModel) Table_ShowStands.getModel();
+    modelTable.setRowCount(0);
+
+    for (Stand s : model.getStands()) {
+
+        String publishers = "-";
+        if (!s.getPublishers().isEmpty()) {
+            publishers = s.getPublishers().get(0).getName();
+            for (int i = 1; i < s.getPublishers().size(); i++) {
+                publishers += ", " + s.getPublishers().get(i).getName();
+            }
+        }
+
+        modelTable.addRow(new Object[]{
+                s.getId(),
+                s.getPrice(),
+                s.getPublishers().size() > 0 ? "Sí" : "No",
+                publishers
+        });
+    }
+}
+
+
+ //tabla de libros
+    
+    private void actualizarTablaLibros() {
+
+    DefaultTableModel modelTable = (DefaultTableModel) Table_ShowLibros.getModel();
+    modelTable.setRowCount(0);
+
+    String filter = ComboBox_ShowLib_Libros.getSelectedItem().toString();
+
+    for (Book book : model.getBooks()) {
+
+        // Construcción de autores
+        String authors = book.getAuthors().get(0).getFullname();
+        for (int i = 1; i < book.getAuthors().size(); i++) {
+            authors += ", " + book.getAuthors().get(i).getFullname();
+        }
+
+   
+        if (filter.equals("Libros Impresos") && book instanceof PrintedBook printedBook) {
+            modelTable.addRow(new Object[]{
+                printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
+                printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
+                printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
+            });
+        }
+
+        else if (filter.equals("Libros Digitales") && book instanceof DigitalBook digitalBook) {
+            modelTable.addRow(new Object[]{
+                digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
+                digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
+                "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
+            });
+        }
+
+        else if (filter.equals("Audiolibros") && book instanceof Audiobook audiobook) {
+            modelTable.addRow(new Object[]{
+                audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
+                audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
+                "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+            });
+        }
+
+        else if (filter.equals("Todos los Libros")) {
+            if (book instanceof PrintedBook printedBook) {
+                modelTable.addRow(new Object[]{
+                    printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
+                    printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
+                    printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
+                });
+            }
+
+            if (book instanceof DigitalBook digitalBook) {
+                modelTable.addRow(new Object[]{
+                    digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
+                    digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
+                    "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
+                });
+            }
+
+            if (book instanceof Audiobook audiobook) {
+                modelTable.addRow(new Object[]{
+                    audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
+                    audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
+                    "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+                });
+            }
+        }
+    }
+}
+
+
+
+
+
+    private void cargarNarradoresComboBox() {  
+    ComboBox_Libro_Narrador.removeAllItems();
+    ComboBox_Libro_Narrador.addItem("Seleccione uno...");
+    for (Narrator n : model.getNarrators()) {
+        ComboBox_Libro_Narrador.addItem(n.getId() + " - " + n.getFirstname() + " " + n.getLastname());
+    }
+}
 
     
     
@@ -126,6 +393,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     
     private void cargarEditorialesComboBox() {
     ComboBox_Libro_Editorial.removeAllItems();
+    ComboBox_Libro_Editorial.addItem("Seleccione uno...");
 
     for (Publisher p : model.getPublishers()) {
         ComboBox_Libro_Editorial.addItem(
@@ -134,21 +402,6 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     }
 }
 
-    
-    private void actualizarTablaLibros() {
-    DefaultTableModel model = (DefaultTableModel) Table_ShowEdit.getModel();
-    model.setRowCount(0);
-
-    for (Book b : this.model.getBooks()) {
-        model.addRow(new Object[]{
-            b.getIsbn(),
-            b.getTitle(),
-            b.getGenre(),
-            b.getPublisher().getName(),
-            b.getValue()
-        });
-    }
-}
 
 
     /**
@@ -1523,14 +1776,34 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
     private void Button_Persona_CrearAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearAutorActionPerformed
         // TODO add your handling code here:
+        try {
         long id = Long.parseLong(Text_Persona_ID.getText());
         String firstname = Text_Persona_Nombre.getText();
         String lastname = Text_Persona_Apellido.getText();
-        
-        this.authors.add(new Author(id, firstname, lastname));
-        
-        ComboBox_Libro_Autores.addItem(id + " - " + firstname + " " + lastname);
-        ComboBox_ConsAdic_Autor.addItem(id + " - " + firstname + " " + lastname);
+
+        Response<Author> response = personController.crearAutor(id, firstname, lastname);
+
+        JOptionPane.showMessageDialog(this, response.getMessage());
+
+        if (response.isSuccess()) {
+            Author createdAuthor = response.getData();
+
+            ComboBox_Libro_Autores.addItem(
+                createdAuthor.getId() + " - " + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
+            );
+            ComboBox_ConsAdic_Autor.addItem(
+                createdAuthor.getId() + " - " + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
+            );
+
+            Text_Persona_ID.setText("");
+            Text_Persona_Nombre.setText("");
+            Text_Persona_Apellido.setText("");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error creando autor: " + e.getMessage());
+    }
     }//GEN-LAST:event_Button_Persona_CrearAutorActionPerformed
 
     private void Button_Persona_CrearGerenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearGerenteActionPerformed
@@ -1558,13 +1831,23 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
 
     private void Button_Persona_CrearNarradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Persona_CrearNarradorActionPerformed
         // TODO add your handling code here:
-        long id = Long.parseLong(Text_Persona_ID.getText());
-        String firstname = Text_Persona_Nombre.getText();
-        String lastname = Text_Persona_Apellido.getText();
-        
-        this.narrators.add(new Narrator(id, firstname, lastname));
-        
-        ComboBox_Libro_Narrador.addItem(id + " - " + firstname + " " + lastname);
+        try {
+    long id = Long.parseLong(Text_Persona_ID.getText());
+    String firstname = Text_Persona_Nombre.getText();
+    String lastname = Text_Persona_Apellido.getText();
+
+    Response<Narrator> response = personController.crearNarrator(new Narrator(id, firstname, lastname));
+    JOptionPane.showMessageDialog(this, response.getMessage());
+
+    if (response.isSuccess()) {
+        Text_Persona_ID.setText("");
+        Text_Persona_Nombre.setText("");
+        Text_Persona_Apellido.setText("");
+    }
+
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, "Error creando narrador: " + e.getMessage());
+}
     }//GEN-LAST:event_Button_Persona_CrearNarradorActionPerformed
 
     private void Button_Editorial_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Editorial_CrearActionPerformed
@@ -1587,18 +1870,25 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         javax.swing.JOptionPane.showMessageDialog(this, response.getMessage());
 
         if (response.isSuccess()) {
+    Text_Editorial_NIT.setText("");
+    Text_Editorial_Nombre.setText("");
+    Text_Editorial_Direccion.setText("");
 
+    cargarEditorialesComboBox();   
 
-            Text_Editorial_NIT.setText("");
-            Text_Editorial_Nombre.setText("");
-            Text_Editorial_Direccion.setText("");
+    Publisher createdPublisher = response.getData();
 
-    
-            Publisher createdPublisher = response.getData();
+    ComboBox_Libro_Editorial.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")");
+    ComboBox_Comprar_Editoriales.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")"); 
 
-            ComboBox_Libro_Editorial.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")");
-            ComboBox_Comprar_Editoriales.addItem(createdPublisher.getName() + " (" + createdPublisher.getNit() + ")");
-        }
+   
+    if (ComboBox_Comprar_Editoriales.getItemCount() > 0 &&
+        ComboBox_Comprar_Editoriales.getItemAt(0).equals("Seleccione uno...")) {
+
+        ComboBox_Comprar_Editoriales.removeItemAt(0);
+    }
+
+}
 
     } catch (Exception e) {
         javax.swing.JOptionPane.showMessageDialog(this,
@@ -1621,16 +1911,23 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
     private void Button_Libro_CrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Libro_CrearActionPerformed
         // TODO add your handling code here:
         try {
+        if (ComboBox_Libro_Editorial.getSelectedIndex() <= 0) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una editorial");
+            return;
+        }
+
         String title = Text_Libro_Titulo.getText();
         String isbn = Text_Libro_ISBN.getText();
         String genre = ComboBox_Libro_Genero.getItemAt(ComboBox_Libro_Genero.getSelectedIndex());
         String format = ComboBox_Libro_Formato.getItemAt(ComboBox_Libro_Formato.getSelectedIndex());
         double value = Double.parseDouble(Text_Libro_Valor.getText());
-        String publisherNit = ComboBox_Libro_Editorial.getItemAt(
-                ComboBox_Libro_Editorial.getSelectedIndex()
-        ).split("\\(")[1].replace(")", "");
 
-        // Convertir autores (IDs)
+        String selectedItem = ComboBox_Libro_Editorial.getItemAt(
+                ComboBox_Libro_Editorial.getSelectedIndex()
+        );
+        String publisherNit = selectedItem.substring(selectedItem.indexOf("(") + 1,
+                                                      selectedItem.indexOf(")"));
+
         ArrayList<Long> authorIds = new ArrayList<>();
         String[] authorsData = Text_Libro.getText().split("\n");
         for (String a : authorsData) {
@@ -1644,17 +1941,18 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
             int pages = Integer.parseInt(Text_Libro_Paginas.getText());
             int copies = Integer.parseInt(Text_Libro_Ejemplares.getText());
             response = bookController.createPrintedBook(title, authorIds, isbn, genre, format, value, publisherNit, pages, copies);
-        }
+        } 
         else if (RadioB_Libro_Digital.isSelected()) {
             String hyperlink = Text_Libro_Hipervinculo.getText();
             response = bookController.createDigitalBook(title, authorIds, isbn, genre, format, value, publisherNit, hyperlink);
-        }
+        } 
         else { // Audiobook
             int duration = Integer.parseInt(Text_Libro_Duracion.getText());
-            long narratorId = Long.parseLong(ComboBox_Libro_Narrador
-                    .getItemAt(ComboBox_Libro_Narrador.getSelectedIndex())
-                    .split(" - ")[0]);
-
+            long narratorId = Long.parseLong(
+                    ComboBox_Libro_Narrador.getItemAt(
+                            ComboBox_Libro_Narrador.getSelectedIndex()
+                    ).split(" - ")[0]
+            );
             response = bookController.createAudioBook(title, authorIds, isbn, genre, format, value, publisherNit, duration, narratorId);
         }
 
@@ -1671,6 +1969,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         JOptionPane.showMessageDialog(this,
                 "Error creando libro: " + e.getMessage());
     }
+
     }//GEN-LAST:event_Button_Libro_CrearActionPerformed
 
     private void Button_Comprar_AgregarStandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Comprar_AgregarStandActionPerformed
@@ -1732,6 +2031,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements ModelObserver 
         // TODO add your handling code here:
       DefaultTableModel modelTable = (DefaultTableModel) Table_ShowEdit.getModel();
 modelTable.setRowCount(0);
+actualizarTablaEditoriales();
 
 for (Publisher publisher : model.getPublishers()) {
     modelTable.addRow(new Object[]{
@@ -1747,6 +2047,7 @@ for (Publisher publisher : model.getPublishers()) {
     private void Button_ShowPers_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowPers_ConsultarActionPerformed
         DefaultTableModel modelTable = (DefaultTableModel) Table_ShowPersonas.getModel();
     modelTable.setRowCount(0);
+    actualizarTablaPersonas();
 
     for (Manager m : model.getManagers()) {
         modelTable.addRow(new Object[]{
@@ -1793,61 +2094,130 @@ for (Publisher publisher : model.getPublishers()) {
 
     private void Button_ShowLib_ConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ShowLib_ConsultarActionPerformed
         // TODO add your handling code here:
-        String search = ComboBox_ShowLib_Libros.getItemAt(ComboBox_ShowLib_Libros.getSelectedIndex());
-        
-        DefaultTableModel model = (DefaultTableModel) Table_ShowLibros.getModel();
-        model.setRowCount(0);
-        
-        if (search.equals("Libros Impresos")) {
-            for (Book book : this.books) {
-                if (book instanceof PrintedBook printedBook) {
-                    String authors = printedBook.getAuthors().get(0).getFullname();
-                    for (int i = 1; i < printedBook.getAuthors().size(); i++) {
-                        authors += (", " + printedBook.getAuthors().get(i).getFullname());
-                    }
-                    model.addRow(new Object[]{printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(), printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(), printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"});
-                }
+String search = ComboBox_ShowLib_Libros.getItemAt(ComboBox_ShowLib_Libros.getSelectedIndex());
+
+DefaultTableModel model = (DefaultTableModel) Table_ShowLibros.getModel();
+model.setRowCount(0);
+
+// ************************ LIBROS IMPRESOS ************************
+if (search.equals("Libros Impresos")) {
+    for (Book book : this.books) {
+        if (book instanceof PrintedBook printedBook) {
+
+            String authors = printedBook.getAuthors().get(0).getFullname();
+            for (int i = 1; i < printedBook.getAuthors().size(); i++) {
+                authors += (", " + printedBook.getAuthors().get(i).getFullname());
             }
+
+            model.addRow(new Object[]{
+                printedBook.getTitle(),
+                authors,
+                printedBook.getIsbn(),
+                printedBook.getGenre(),
+                printedBook.getFormat(),
+                printedBook.getValue(),
+                printedBook.getPublisher().getName(),
+                printedBook.getCopies(),
+                printedBook.getPages(),
+                "-",
+                "-",
+                "-"
+            });
         }
-        if (search.equals("Libros Digitales")) {
-            for (Book book : this.books) {
-                if (book instanceof DigitalBook digitalBook) {
-                    String authors = digitalBook.getAuthors().get(0).getFullname();
-                    for (int i = 1; i < digitalBook.getAuthors().size(); i++) {
-                        authors += (", " + digitalBook.getAuthors().get(i).getFullname());
-                    }
-                    model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
-                }
+    }
+}
+
+// ************************ LIBROS DIGITALES ************************
+if (search.equals("Libros Digitales")) {
+    for (Book book : this.books) {
+        if (book instanceof DigitalBook digitalBook) {
+
+            String authors = digitalBook.getAuthors().get(0).getFullname();
+            for (int i = 1; i < digitalBook.getAuthors().size(); i++) {
+                authors += (", " + digitalBook.getAuthors().get(i).getFullname());
             }
+
+            model.addRow(new Object[]{
+                digitalBook.getTitle(),
+                authors,
+                digitalBook.getIsbn(),
+                digitalBook.getGenre(),
+                digitalBook.getFormat(),
+                digitalBook.getValue(),
+                digitalBook.getPublisher().getName(),
+                "-",
+                "-",
+                digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No",
+                "-",
+                "-"
+            });
         }
-        if (search.equals("Audiolibros")) {
-            for (Book book : this.books) {
-                if (book instanceof Audiobook audiobook) {
-                    String authors = audiobook.getAuthors().get(0).getFullname();
-                    for (int i = 1; i < audiobook.getAuthors().size(); i++) {
-                        authors += (", " + audiobook.getAuthors().get(i).getFullname());
-                    }
-                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
-                }
+    }
+}
+
+// ************************ AUDIOLIBROS ************************
+if (search.equals("Audiolibros")) {
+    for (Book book : this.books) {
+        if (book instanceof Audiobook audiobook) {
+
+            String authors = audiobook.getAuthors().get(0).getFullname();
+            for (int i = 1; i < audiobook.getAuthors().size(); i++) {
+                authors += (", " + audiobook.getAuthors().get(i).getFullname());
             }
+
+            model.addRow(new Object[]{
+                audiobook.getTitle(),
+                authors,
+                audiobook.getIsbn(),
+                audiobook.getGenre(),
+                audiobook.getFormat(),
+                audiobook.getValue(),
+                audiobook.getPublisher().getName(),
+                "-",
+                "-",
+                "-",
+                audiobook.getNarrator().getFullname(),
+                audiobook.getDuration()
+            });
         }
-        if (search.equals("Todos los Libros")) {
-            for (Book book : this.books) { 
-                String authors = book.getAuthors().get(0).getFullname();
-                for (int i = 1; i < book.getAuthors().size(); i++) {
-                    authors += (", " + book.getAuthors().get(i).getFullname());
-                }
-                if (book instanceof PrintedBook printedBook) {
-                    model.addRow(new Object[]{printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(), printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(), printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"});
-                }
-                if (book instanceof DigitalBook digitalBook) {
-                    model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
-                }
-                if (book instanceof Audiobook audiobook) {
-                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
-                }
-            }
+    }
+}
+
+// ************************ TODOS LOS LIBROS ************************
+if (search.equals("Todos los Libros")) {
+    for (Book book : this.books) {
+
+        String authors = book.getAuthors().get(0).getFullname();
+        for (int i = 1; i < book.getAuthors().size(); i++) {
+            authors += (", " + book.getAuthors().get(i).getFullname());
         }
+
+        if (book instanceof PrintedBook printedBook) {
+            model.addRow(new Object[]{
+                printedBook.getTitle(), authors, printedBook.getIsbn(), printedBook.getGenre(),
+                printedBook.getFormat(), printedBook.getValue(), printedBook.getPublisher().getName(),
+                printedBook.getCopies(), printedBook.getPages(), "-", "-", "-"
+            });
+        }
+
+        if (book instanceof DigitalBook digitalBook) {
+            model.addRow(new Object[]{
+                digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(),
+                digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(),
+                "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"
+            });
+        }
+
+        if (book instanceof Audiobook audiobook) {
+            model.addRow(new Object[]{
+                audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(),
+                audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(),
+                "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()
+            });
+        }
+    }
+}
+
     }//GEN-LAST:event_Button_ShowLib_ConsultarActionPerformed
 
     private void Button_ConsAdic_Consultar_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ConsAdic_Consultar_1ActionPerformed
@@ -1877,7 +2247,7 @@ for (Publisher publisher : model.getPublishers()) {
                 model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
             }
             if (book instanceof Audiobook audiobook) {
-                model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
+                model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()});
             }
         }
     }//GEN-LAST:event_Button_ConsAdic_Consultar_1ActionPerformed
@@ -1902,7 +2272,7 @@ for (Publisher publisher : model.getPublishers()) {
                     model.addRow(new Object[]{digitalBook.getTitle(), authors, digitalBook.getIsbn(), digitalBook.getGenre(), digitalBook.getFormat(), digitalBook.getValue(), digitalBook.getPublisher().getName(), "-", "-", digitalBook.hasHyperlink() ? digitalBook.getHyperlink() : "No", "-", "-"});
                 }
                 if (book instanceof Audiobook audiobook) {
-                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrador().getFullname(), audiobook.getDuration()});
+                    model.addRow(new Object[]{audiobook.getTitle(), authors, audiobook.getIsbn(), audiobook.getGenre(), audiobook.getFormat(), audiobook.getValue(), audiobook.getPublisher().getName(), "-", "-", "-", audiobook.getNarrator().getFullname(), audiobook.getDuration()});
                 }
             }
         }
