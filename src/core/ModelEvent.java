@@ -16,7 +16,9 @@ public class ModelEvent {
     public static final String STAND_BOUGHT = "stand_bought";
     public static final String BOOK_CREATED = "book_created"; 
     public static final String MANAGER_CREATED = "manager_created";
-    public static final String NARRATOR_CREATED = "manager_created";
+    public static final String NARRATOR_CREATED = "narrator_created";
+    public static final String AUTHOR_CREATED = "author_created";
+
 
 
     private final Object source;
