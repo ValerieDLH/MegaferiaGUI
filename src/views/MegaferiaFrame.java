@@ -89,7 +89,11 @@ TabbedPane_Tabla.addChangeListener(e -> {
         case "Show Editoriales" -> actualizarTablaEditoriales();
         case "Show Personas" -> actualizarTablaPersonas();
         case "Show Libros" -> actualizarTablaLibros();
-        case "Consultas Adicionales" -> actualizarTablasConsultas();
+        case "Consultas Adicionales" -> {
+    cargarAutoresConsulta();
+    actualizarTablasConsultas();
+}
+
 
     }
 });
@@ -125,6 +129,9 @@ TabbedPane_Tabla.addChangeListener(e -> {
         event.getType().equals(ModelEvent.STAND_BOUGHT)) {
 
         actualizarTablaStands();
+    if(event.getType().equals(ModelEvent.AUTHOR_CREATED)) {
+    cargarAutoresConsulta();
+}
     }
     
 
@@ -228,6 +235,14 @@ TabbedPane_Tabla.addChangeListener(e -> {
         }
     }
 }
+    private void cargarAutoresConsulta() {
+    ComboBox_ConsAdic_Autor.removeAllItems();
+    ComboBox_ConsAdic_Autor.addItem("Seleccione uno...");
+    for (Author a : model.getAuthors()) {
+        ComboBox_ConsAdic_Autor.addItem(a.getId() + " - " + a.getFirstname() + " " + a.getLastname());
+    }
+}
+
 
 
     private void actualizarTablaAutoresConMasLibros() {
