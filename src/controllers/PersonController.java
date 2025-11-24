@@ -56,9 +56,11 @@ public class PersonController {
 
 
     public Response<Narrator> crearNarrator(Narrator narrator) {
-        model.addNarrator(narrator);
-        return new Response<>(true, "Narrador creado correctamente", narrator);
-    }
+    model.addNarrator(narrator);
+    model.notifyObservers(ModelEvent.NARRATOR_CREATED); 
+    return new Response<>(true, "Narrador creado correctamente", narrator);
+}
+
     
     //Creacion de gerentes
     public Response<Manager> crearGerente(long id, String firstname, String lastname) {
