@@ -14,6 +14,8 @@ import core.Author;
 import core.Manager;
 import core.Narrator;
 import utils.Response;
+import core.ModelEvent;
+
 
 public class PersonController {
 
@@ -45,7 +47,11 @@ public class PersonController {
     Author author = new Author(id, firstname, lastname);
     model.addAuthor(author);
 
+    // Notificar que se creó un autor
+    model.notifyObservers(ModelEvent.AUTHOR_CREATED);
+
     return new Response<>(true, "Autor creado correctamente", author);
+
 }
 
 
